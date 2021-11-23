@@ -1,3 +1,7 @@
 .idea/
 config.yaml
 arknights.db
+main
+main.exe
+SkadiBot_*
+build.sh
