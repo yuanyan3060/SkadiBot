@@ -1,0 +1,4 @@
+CommandPrefix: ""
+SuperUsers: [""]
+WS: "ws://127.0.0.1:6700"
+AccessToken: "114514"
