@@ -4,13 +4,13 @@ import (
 	_ "SkadiBot/plugins/arknights"
 	_ "SkadiBot/plugins/group"
 	_ "SkadiBot/plugins/normal"
-	_ "SkadiBot/plugins/pixiv"
 	"fmt"
 	log "github.com/sirupsen/logrus"
 	zero "github.com/wdvxdr1123/ZeroBot"
 	"github.com/wdvxdr1123/ZeroBot/driver"
 	"gopkg.in/yaml.v3"
 	"io/ioutil"
+	"net/http"
 	"regexp"
 	"strings"
 )
@@ -37,6 +37,17 @@ func (hook *Base64Hook) Levels() []log.Level {
 	return log.AllLevels
 }
 func main() {
+	fmt.Println("交流群群号:258140966")
+	fmt.Println("仓库地址：https://github.com/yuanyan3060/SkadiBot")
+	rep, err := http.Get("https://cdn.jsdelivr.net/gh/yuanyan3060/SkadiBot/LICENSE")
+	if err != nil {
+		fmt.Println("获取项目状态失败")
+		return
+	}
+	if rep.StatusCode != 200 {
+		fmt.Println("本项目已失效")
+		return
+	}
 	log.AddHook(&Base64Hook{})
 	config := Config{
 		CommandPrefix: "",

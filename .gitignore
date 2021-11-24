@@ -5,3 +5,7 @@ main
 main.exe
 SkadiBot_*
 build.sh
+build_with_gocq.sh
+build
+install.sh
+./plugins/pixiv
