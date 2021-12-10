@@ -23,6 +23,5 @@ jobs:
         with:
           version: latest
           args: release --rm-dist
-          files: sarasa-mono-sc-bold.ttf data/*
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
