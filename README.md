@@ -1,6 +1,7 @@
 SkadiBot(浊心斯卡蒂bot)
 =
-SkadiBot是 基于 ZeroBot 的 明日方舟机器人
+SkadiBot是 基于 ZeroBot 的 明日方舟机器人  
+交流群群号:258140966  
 
 功能:
 -
