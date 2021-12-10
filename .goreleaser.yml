@@ -46,7 +46,7 @@ builds:
       - -s -w
 
 checksum:
-  name_template: "zbp_checksums.txt"
+  name_template: "skadi_checksums.txt"
 changelog:
   sort: asc
   filters:
@@ -67,7 +67,7 @@ archives:
     files:
       - sarasa-mono-sc-bold.ttf
       - data/*
-    name_template: "zbp_{{ .Os }}_{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}"
+    name_template: "skadi_{{ .Os }}_{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}"
     format_overrides:
       - goos: windows
         format: zip
@@ -75,7 +75,7 @@ archives:
 nfpms:
   - license: AGPL 3.0
     homepage: https://github.com/yuanyan3060/SkadiBot
-    file_name_template: "zbp_{{ .Os }}_{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}"
+    file_name_template: "skadi_{{ .Os }}_{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}"
     formats:
       - deb
       - rpm
