@@ -10,8 +10,17 @@ import (
 	"image"
 )
 
-const helpStr = "[1] 十连:消耗寻访凭证进行一次十连抽卡\n" +
-	"[2] 查询:查询已有的干员"
+const helpStr = "[1]  签到:每日可签到获取十连券\n" +
+	"[2]  十连:消耗寻访凭证进行一次十连抽卡\n" +
+	"[3]  查询:查询已有的干员\n" +
+	"[4]  查公招:根据截图识别标签并计算结果\n" +
+	"[5]  源码:获取斯卡蒂bot的仓库\n" +
+	"[6]  占用:获取斯卡蒂bot占用的内存\n" +
+	"[7]  公告:向斯卡蒂bot加入的群发送一条消息\n" +
+	"[8]  群欢迎\n" +
+	"[9]  退群提醒\n" +
+	"[10] 防撤回（仅发送给超级管理员权限的帐号)\n" +
+	"[11] 识别b站视频小程序内的链接"
 
 func drawHelp() (image.Image, error) {
 	w := 0.0
@@ -21,7 +30,11 @@ func drawHelp() (image.Image, error) {
 	for _, char := range helpStr {
 		charWeight := float64(font.MeasureString(utils.Fonts, string(char)) >> 6)
 		if w+charWeight > totalW || string(char) == "\n" {
-			w = charWeight
+			if string(char) == "\n" {
+				w = 0
+			} else {
+				w = charWeight
+			}
 			totalH += h
 		} else {
 			w += charWeight
@@ -43,9 +56,13 @@ func drawHelp() (image.Image, error) {
 	for _, char := range helpStr {
 		charWeight := float64(font.MeasureString(utils.Fonts, string(char)) >> 6)
 		if w+charWeight > totalW || string(char) == "\n" {
-			w = charWeight
 			totalH += h
-			img.DrawString(string(char), 0.0, float64(totalH))
+			if string(char) != "\n" {
+				w = charWeight
+				img.DrawString(string(char), 0.0, float64(totalH))
+			} else {
+				w = 0
+			}
 		} else {
 			img.DrawString(string(char), w, float64(totalH))
 			w += charWeight

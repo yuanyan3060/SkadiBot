@@ -9,7 +9,7 @@ var Fonts font.Face
 
 func init() {
 	var err error
-	Fonts, err = gg.LoadFontFace("sarasa-fixed-hc-bold.ttf", 25)
+	Fonts, err = gg.LoadFontFace("sarasa-mono-sc-semibold.ttf", 18)
 	if err != nil {
 		panic(err)
 	}

@@ -1,4 +1,4 @@
 CommandPrefix: ""
-SuperUsers: [""]
-WS: "ws://127.0.0.1:6700"
+SuperUsers: ["1846865993"]
+WS: "ws://192.168.0.104:8080"
 AccessToken: "114514"

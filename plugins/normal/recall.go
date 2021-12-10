@@ -34,7 +34,6 @@ func init() {
 							recallMessage.Sender.ID,
 						)
 					}
-
 					sendMessage := append(recallMessage.Elements, message.Text(text))
 					ctx.SendPrivateMessage(SuperUserId, sendMessage)
 				}

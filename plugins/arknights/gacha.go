@@ -20,26 +20,25 @@ import (
 var CharTable map[string]CharData
 var Rarity2CharName [][]string
 
-func getProfessionImage(profession string) (image.Image, error) {
+func getProfessionImage(profession string) (*image.Image, error) {
 	professionImagePath := fmt.Sprintf("data/static/profession_img/%s.png", profession)
 	professionImage, err := gg.LoadImage(professionImagePath)
 	if err != nil {
 		return nil, err
 	}
-	return professionImage, nil
+	return &professionImage, nil
 }
 
-func getRarityImage(rarity int8) (image.Image, error) {
+func getRarityImage(rarity int8) (*image.Image, error) {
 	rarityImagePath := fmt.Sprintf("data/static/gacha_rarity_img/%d.png", rarity)
 	rarityImage, err := gg.LoadImage(rarityImagePath)
 	if err != nil {
 		return nil, err
 	}
-	return rarityImage, nil
+	return &rarityImage, nil
 }
 
-func getRarityBackImage(rarity int8, index int) (image.Image, error) {
-
+func getRarityBackImage(rarity int8, index int) (*image.Image, error) {
 	rarityImage, err := getRarityImage(rarity)
 	if err != nil {
 		return nil, err
@@ -48,16 +47,16 @@ func getRarityBackImage(rarity int8, index int) (image.Image, error) {
 	rarityBackImageRGBA := rarityBackRGBA.SubImage(image.Rect(27+index*123, 0, 149+index*123, 720))
 	rarityBackImageCrop := gg.NewContextForImage(rarityBackImageRGBA)
 	rarityBackImage := rarityBackImageCrop.Image()
-	return rarityBackImage, nil
+	return &rarityBackImage, nil
 }
 
-func imageToRGBA(src image.Image) *image.RGBA {
-	if dst, ok := src.(*image.RGBA); ok {
+func imageToRGBA(src *image.Image) *image.RGBA {
+	if dst, ok := (*src).(*image.RGBA); ok {
 		return dst
 	}
-	b := src.Bounds()
+	b := (*src).Bounds()
 	dst := image.NewRGBA(image.Rect(0, 0, b.Dx(), b.Dy()))
-	draw.Draw(dst, dst.Bounds(), src, b.Min, draw.Src)
+	draw.Draw(dst, dst.Bounds(), *src, b.Min, draw.Src)
 	return dst
 }
 
@@ -134,10 +133,10 @@ func drawGachaImage(charNames []string) ([]byte, error) {
 			return nil, err
 		}
 
-		background.DrawImage(rarityBackImage, 0, 0)
-		background.DrawImage(rarityImage, 27+index*123, 0)
+		background.DrawImage(*rarityBackImage, 0, 0)
+		background.DrawImage(*rarityImage, 27+index*123, 0)
 		background.DrawImage(charImage, 27+index*123, 175)
-		background.DrawImage(professionImage, 34+int(math.Round(float64(index)*122.5)), 490)
+		background.DrawImage(*professionImage, 34+int(math.Round(float64(index)*122.5)), 490)
 	}
 	return utils.Image2Base64(background.Image()), nil
 }
@@ -145,22 +144,23 @@ func drawGachaImage(charNames []string) ([]byte, error) {
 func init() {
 	zero.OnCommand("十连").
 		Handle(func(ctx *zero.Ctx) {
-			rollResult := rollGacha()
-			i, err := drawGachaImage(rollResult)
-			if err != nil {
-				return
-			}
-			sendBase64 := "base64://" + helper.BytesToString(i)
-
 			var user User
-			err = DB.First(&user, "qq = ?", ctx.Event.UserID).Error
+			err := DB.First(&user, "qq = ?", ctx.Event.UserID).Error
 			if err == gorm.ErrRecordNotFound {
 				user = User{
-					QQ:    ctx.Event.UserID,
-					Chars: "{}",
+					QQ:              ctx.Event.UserID,
+					Chars:           "{}",
+					TenGachaTickets: 0,
+					LastCheckInTime: time.Unix(0, 0),
 				}
-				DB.Save(&user)
 			}
+			if user.TenGachaTickets <= 0 {
+				ctx.SendChain(
+					message.Text("十连寻访凭证不足"),
+				)
+				return
+			}
+			rollResult := rollGacha()
 			oldCharDict := make(map[string]int)
 			err = json.Unmarshal([]byte(user.Chars), &oldCharDict)
 			if err != nil {
@@ -178,9 +178,14 @@ func init() {
 			if err != nil {
 				return
 			}
-			start := time.Now()
-			DB.Model(&user).Where("qq = ?", ctx.Event.UserID).Update("chars", string(CharsBytes))
-			fmt.Println(time.Now().Sub(start))
+			user.Chars = string(CharsBytes)
+			user.TenGachaTickets -= 1
+			err = DB.Save(&user).Error
+			i, err := drawGachaImage(rollResult)
+			if err != nil {
+				return
+			}
+			sendBase64 := "base64://" + helper.BytesToString(i)
 			ctx.SendChain(
 				message.Image(sendBase64),
 				message.Text(gachaTextBuild(rollResult)),

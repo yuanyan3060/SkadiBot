@@ -2,6 +2,7 @@ package main
 
 import (
 	_ "SkadiBot/plugins/arknights"
+	_ "SkadiBot/plugins/bilibili"
 	_ "SkadiBot/plugins/group"
 	_ "SkadiBot/plugins/normal"
 	"fmt"
@@ -11,6 +12,8 @@ import (
 	"gopkg.in/yaml.v3"
 	"io/ioutil"
 	"net/http"
+	_ "net/http/pprof"
+	"os"
 	"regexp"
 	"strings"
 )
@@ -36,7 +39,16 @@ func (hook *Base64Hook) Fire(entry *log.Entry) error {
 func (hook *Base64Hook) Levels() []log.Level {
 	return log.AllLevels
 }
+
 func main() {
+	err := os.Setenv("HTTP_PROXY", "")
+	if err != nil {
+		return
+	}
+	err = os.Setenv("HTTPS_PROXY", "")
+	if err != nil {
+		return
+	}
 	fmt.Println("交流群群号:258140966")
 	fmt.Println("仓库地址：https://github.com/yuanyan3060/SkadiBot")
 	rep, err := http.Get("https://cdn.jsdelivr.net/gh/yuanyan3060/SkadiBot/LICENSE")
