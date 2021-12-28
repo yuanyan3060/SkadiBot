@@ -71,15 +71,3 @@ archives:
     format_overrides:
       - goos: windows
         format: zip
-
-nfpms:
-  - license: AGPL 3.0
-    homepage: https://github.com/yuanyan3060/SkadiBot
-    file_name_template: "skadi_{{ .Os }}_{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}"
-    files:
-      - sarasa-mono-sc-semibold.ttf
-      - data/*
-    formats:
-      - deb
-      - rpm
-    maintainer: yuanyan3060
